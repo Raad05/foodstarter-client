@@ -9,7 +9,7 @@ const SearchRecipe = () => {
   const [loading, setLoading] = useState(true);
   const { address } = useAccount();
 
-  const contractAddress = "0xeB69A07abbD481e7F8Ac04b6C154FF301fd2F150";
+  const contractAddress = "0xF2A46987867c148691FD8FFBe906A49937C451aF";
 
   const getData = async (e) => {
     e.preventDefault();

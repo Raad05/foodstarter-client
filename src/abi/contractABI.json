@@ -50,7 +50,7 @@
     ],
     "name": "sendFunding",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

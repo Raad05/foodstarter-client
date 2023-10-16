@@ -6,19 +6,13 @@ import {
 } from "@wagmi/core";
 import contractABI from "../abi/contractABI.json";
 import { useEffect, useState } from "react";
-import {
-  useAccount,
-  usePrepareSendTransaction,
-  useSendTransaction,
-} from "wagmi";
-import { useDebounce } from "use-debounce";
-import { parseEther } from "viem";
+import { useAccount } from "wagmi";
 
 const Recipes = () => {
   const [result, setResult] = useState([]);
   const { address } = useAccount();
 
-  const contractAddress = "0xeB69A07abbD481e7F8Ac04b6C154FF301fd2F150";
+  const contractAddress = "0xF2A46987867c148691FD8FFBe906A49937C451aF";
 
   const fetchData = async () => {
     try {
@@ -37,12 +31,11 @@ const Recipes = () => {
     fetchData();
   }, []);
 
-  const sendFund = async (name, amount) => {
+  const sendFund = async (name) => {
     try {
       const request = await prepareWriteContract({
         abi: contractABI,
         address: contractAddress,
-        value: amount,
         functionName: "sendFunding",
         args: [name],
         account: address,
@@ -54,8 +47,32 @@ const Recipes = () => {
       });
 
       alert("Successfully sent fund");
+      window.location.reload();
     } catch (err) {
       alert("Failed to send fund");
+      console.log(err);
+    }
+  };
+
+  const withdrawFund = async (name) => {
+    try {
+      const request = await prepareWriteContract({
+        abi: contractABI,
+        address: contractAddress,
+        functionName: "withdrawFunding",
+        args: [name],
+        account: address,
+      });
+
+      const { hash } = await writeContract(request);
+      await waitForTransaction({
+        hash,
+      });
+
+      alert("Fund withdrawal successful");
+      window.location.reload();
+    } catch (err) {
+      alert("Failed to withdraw fund");
       console.log(err);
     }
   };
@@ -80,10 +97,16 @@ const Recipes = () => {
             </p>
             <p>Fund raised: {recipe.fundRaisedSoFar.toString()}</p>
             <button
-              onClick={() => sendFund(recipe.name, recipe.fundAmount)}
+              onClick={() => sendFund(recipe.name)}
               className="bg-red-400 p-2 text-white rounded"
             >
               Fund
+            </button>
+            <button
+              onClick={() => withdrawFund(recipe.name)}
+              className="bg-red-400 p-2 text-white rounded"
+            >
+              Withdraw Fund
             </button>
           </div>
         ))}
